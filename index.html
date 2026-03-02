@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elliot Mermel</title>
+  <meta name="description" content="Elliot Mermel — photography and things I build.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #080808;
+      --fg: #e4ded4;
+      --fg-dim: #8a8578;
+      --fg-faint: #3d3a35;
+      --accent: #c4a882;
+      --gap: 14px;
+      --serif: 'Instrument Serif', 'Georgia', serif;
+      --mono: 'DM Mono', 'Menlo', monospace;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: var(--mono);
+      overflow-x: hidden;
+    }
+
+    /* ── Film grain overlay ── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 256px 256px;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 clamp(32px, 8vw, 120px);
+      position: relative;
+    }
+
+    .hero-name {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: clamp(3.2rem, 9vw, 8.5rem);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: var(--fg);
+      margin-bottom: 0.15em;
+    }
+
+    .hero-name em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-rule {
+      width: 64px;
+      height: 1px;
+      background: var(--fg-faint);
+      margin: 1.8rem 0;
+      transform-origin: left;
+      animation: rule-in 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.6s both;
+    }
+
+    .hero-blurb {
+      font-family: var(--mono);
+      font-weight: 300;
+      font-size: clamp(0.82rem, 1.4vw, 1.05rem);
+      line-height: 1.7;
+      color: var(--fg-dim);
+      max-width: 42ch;
+      letter-spacing: 0.01em;
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 3rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--fg-faint);
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      animation: pulse-down 2.5s ease-in-out infinite;
+    }
+
+    .hero-scroll span {
+      display: block;
+      width: 1px;
+      height: 28px;
+      background: linear-gradient(to bottom, transparent, var(--fg-faint));
+    }
+
+    /* ── Hero animations ── */
+    .hero-name {
+      animation: fade-up 1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+    }
+
+    .hero-blurb {
+      animation: fade-up 1s cubic-bezier(0.16, 1, 0.3, 1) 0.8s both;
+    }
+
+    .hero-scroll {
+      animation: fade-up 1s cubic-bezier(0.16, 1, 0.3, 1) 1.2s both,
+                 pulse-down 2.5s ease-in-out 2.2s infinite;
+    }
+
+    @keyframes fade-up {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes rule-in {
+      from {
+        transform: scaleX(0);
+        opacity: 0;
+      }
+      to {
+        transform: scaleX(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes pulse-down {
+      0%, 100% { opacity: 0.4; transform: translateX(-50%) translateY(0); }
+      50% { opacity: 0.8; transform: translateX(-50%) translateY(6px); }
+    }
+
+    /* ── Gallery ── */
+    .gallery {
+      padding: 2rem clamp(16px, 4vw, 80px) 6rem;
+    }
+
+    .gallery-grid {
+      columns: 3;
+      column-gap: var(--gap);
+    }
+
+    .gallery-item {
+      break-inside: avoid;
+      margin-bottom: var(--gap);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .gallery-item img {
+      display: block;
+      width: 100%;
+      height: auto;
+      filter: brightness(0.88) contrast(1.02);
+      transition: filter 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform, filter;
+    }
+
+    .gallery-item:hover img {
+      filter: brightness(1) contrast(1);
+      transform: scale(1.02);
+    }
+
+    .gallery-item .index {
+      position: absolute;
+      bottom: 10px;
+      right: 12px;
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      font-weight: 300;
+      color: var(--fg);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.7);
+      letter-spacing: 0.05em;
+    }
+
+    .gallery-item:hover .index {
+      opacity: 0.6;
+    }
+
+    /* Scroll reveal */
+    .gallery-item {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .gallery-item.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Lightbox ── */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: rgba(4, 4, 4, 0.96);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      cursor: zoom-out;
+      backdrop-filter: blur(8px);
+    }
+
+    .lightbox.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .lightbox img {
+      max-width: 92vw;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 2px;
+      transform: scale(0.95);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .lightbox.active img {
+      transform: scale(1);
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 2rem;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--fg-dim);
+      background: none;
+      border: 1px solid var(--fg-faint);
+      padding: 6px 14px;
+      cursor: pointer;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: color 0.3s, border-color 0.3s;
+    }
+
+    .lightbox-close:hover {
+      color: var(--fg);
+      border-color: var(--fg-dim);
+    }
+
+    /* ── Footer ── */
+    .footer {
+      padding: 3rem clamp(32px, 8vw, 120px);
+      border-top: 1px solid var(--fg-faint);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 300;
+      color: var(--fg-faint);
+      letter-spacing: 0.08em;
+    }
+
+    .footer a {
+      color: var(--fg-dim);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .footer a:hover {
+      color: var(--fg);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 1024px) {
+      .gallery-grid {
+        columns: 2;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .gallery-grid {
+        columns: 1;
+      }
+
+      .hero {
+        padding: 0 clamp(24px, 6vw, 48px);
+      }
+
+      .gallery {
+        padding: 2rem clamp(12px, 4vw, 24px) 4rem;
+      }
+
+      .footer {
+        flex-direction: column;
+        gap: 0.8rem;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Hero ── -->
+  <section class="hero">
+    <h1 class="hero-name">Elliot<br><em>Mermel</em></h1>
+    <div class="hero-rule"></div>
+    <p class="hero-blurb">My name is Elliot Mermel. I like to build things, like this website.</p>
+    <div class="hero-scroll">
+      <span></span>
+    </div>
+  </section>
+
+  <!-- ── Gallery ── -->
+  <section class="gallery">
+    <div class="gallery-grid" id="gallery">
+    </div>
+  </section>
+
+  <!-- ── Lightbox ── -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightbox-close">close</button>
+    <img id="lightbox-img" src="" alt="">
+  </div>
+
+  <!-- ── Footer ── -->
+  <footer class="footer">
+    <span>&copy; Elliot Mermel</span>
+    <span>Film &amp; digital</span>
+  </footer>
+
+  <script>
+    const R2 = 'https://pub-0546e04d7f89423782233dc297addcf8.r2.dev';
+
+    const images = [
+      'IMG_3186.jpg',
+      '2308040010_7.JPG',
+      'IMG_5518.JPG',
+      'IMG_4849.jpg',
+      '000072250023.JPG',
+      '000064260004.JPG',
+      'COVER1.png',
+      '000072250024.JPG',
+      'IMG_3010.JPG',
+      '000064290003.JPG',
+      'IMG_5512.JPG',
+      'IMG_2327.jpg',
+      'IMG_3012.JPG',
+      '000484460023.JPG',
+      'IMG_3013.JPG',
+      'IMG_3014.JPG',
+      'IMG_3015.JPG',
+      'IMG_5513.JPG',
+      'IMG_0682 3.jpg',
+      'IMG_5514.JPG',
+      'IMG_0683 3.jpg',
+      'IMG_5515.JPG',
+      'IMG_5517.JPG',
+      'IMG_5519.JPG',
+      'IMG_5520.JPG',
+      'IMG_5521.JPG',
+      'IMG_5522.JPG',
+      'IMG_5523.JPG',
+      'IMG_5524.JPG',
+      'IMG_5527.JPG',
+    ];
+
+    // Build gallery
+    const gallery = document.getElementById('gallery');
+    images.forEach((filename, i) => {
+      const item = document.createElement('div');
+      item.className = 'gallery-item';
+
+      const img = document.createElement('img');
+      img.src = `${R2}/${encodeURIComponent(filename)}`;
+      img.alt = `Photograph ${i + 1}`;
+      img.loading = 'lazy';
+      img.decoding = 'async';
+
+      const idx = document.createElement('span');
+      idx.className = 'index';
+      idx.textContent = String(i + 1).padStart(2, '0');
+
+      item.appendChild(img);
+      item.appendChild(idx);
+      gallery.appendChild(item);
+
+      // Lightbox click
+      item.addEventListener('click', () => openLightbox(img.src));
+    });
+
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.08,
+      rootMargin: '0px 0px -40px 0px'
+    });
+
+    document.querySelectorAll('.gallery-item').forEach((item, i) => {
+      item.style.transitionDelay = `${(i % 6) * 0.08}s`;
+      observer.observe(item);
+    });
+
+    // Lightbox
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxClose = document.getElementById('lightbox-close');
+
+    function openLightbox(src) {
+      lightboxImg.src = src;
+      lightbox.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    lightbox.addEventListener('click', (e) => {
+      if (e.target !== lightboxImg) closeLightbox();
+    });
+    lightboxClose.addEventListener('click', closeLightbox);
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeLightbox();
+    });
+  </script>
+
+</body>
+</html>
