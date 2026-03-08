@@ -31,7 +31,8 @@
     "sameAs": [
       "https://themerits.substack.com",
       "https://retrieval.company",
-      "https://court-check.com/alaska"
+      "https://clerkcheck.com",
+      "https://court-check.com"
     ],
     "knowsAbout": ["photography", "technology", "law"],
     "description": "Elliot Mermel's personal page."
@@ -163,59 +164,60 @@
       user-select: none;
     }
 
+    /* ── Projects dropdown ── */
     .projects-dropdown {
       position: relative;
     }
 
-    .projects-toggle {
-      background: none;
-      border: none;
-      border-bottom: 1px solid var(--fg-faint);
-      padding: 0 0 1px 0;
-      margin: 0;
-      font: inherit;
+    .projects-dropdown > a {
       color: var(--fg-dim);
-      cursor: pointer;
+      text-decoration: none;
+      border-bottom: 1px solid var(--fg-faint);
+      padding-bottom: 1px;
       transition: color 0.3s, border-color 0.3s;
+      cursor: pointer;
     }
 
-    .projects-toggle:hover,
-    .projects-toggle[aria-expanded="true"] {
+    .projects-dropdown > a:hover {
       color: var(--fg);
       border-color: var(--fg-dim);
     }
 
     .projects-menu {
       position: absolute;
-      top: calc(100% + 0.6rem);
-      left: 50%;
-      transform: translateX(-50%);
-      background: #121210;
+      top: calc(100% + 8px);
+      left: 0;
+      background: var(--bg);
       border: 1px solid var(--fg-faint);
-      border-radius: 4px;
-      padding: 0.4rem 0;
-      display: none;
-      flex-direction: column;
-      white-space: nowrap;
+      padding: 6px 0;
+      min-width: 160px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-4px);
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
       z-index: 100;
     }
 
-    .projects-menu[data-open="true"] {
-      display: flex;
+    .projects-dropdown:hover .projects-menu,
+    .projects-dropdown:focus-within .projects-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
     }
 
     .projects-menu a {
+      display: block;
+      padding: 5px 14px;
       color: var(--fg-dim);
       text-decoration: none;
-      padding: 0.4rem 1rem;
       font-size: 0.75rem;
       letter-spacing: 0.06em;
-      transition: color 0.2s, background 0.2s;
+      border-bottom: none !important;
+      transition: color 0.2s;
     }
 
     .projects-menu a:hover {
       color: var(--fg);
-      background: rgba(255, 255, 255, 0.04);
     }
 
     .hero-scroll {
@@ -467,10 +469,11 @@
       <a href="https://wustllawreview.org/wp-content/uploads/2025/11/15_Mermel_Final-10.26.pdf" target="_blank" rel="noopener">Publications</a>
       <span class="hero-links-sep">/</span>
       <div class="projects-dropdown">
-        <button class="projects-toggle" aria-expanded="false" aria-haspopup="true">Projects</button>
-        <div class="projects-menu" role="menu">
-          <a href="https://retrieval.company" target="_blank" rel="noopener" role="menuitem">Retrieval Company</a>
-          <a href="https://court-check.com/alaska" target="_blank" rel="noopener" role="menuitem">Court Check Alaska</a>
+        <a href="#">Projects</a>
+        <div class="projects-menu">
+          <a href="https://retrieval.company" target="_blank" rel="noopener">retrieval.company</a>
+          <a href="https://clerkcheck.com" target="_blank" rel="noopener">clerkcheck.com</a>
+          <a href="https://court-check.com" target="_blank" rel="noopener">court-check.com</a>
         </div>
       </div>
     </nav>
@@ -596,22 +599,6 @@
     lightboxClose.addEventListener('click', closeLightbox);
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closeLightbox();
-    });
-
-    // Projects dropdown
-    const toggle = document.querySelector('.projects-toggle');
-    const menu = document.querySelector('.projects-menu');
-
-    toggle.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const open = menu.dataset.open === 'true';
-      menu.dataset.open = open ? '' : 'true';
-      toggle.setAttribute('aria-expanded', !open);
-    });
-
-    document.addEventListener('click', () => {
-      menu.dataset.open = '';
-      toggle.setAttribute('aria-expanded', 'false');
     });
   </script>
 
